@@ -4,8 +4,14 @@
  */
 package thesnake;
 
+import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Point;
 import java.util.ArrayList;
+import javax.swing.ImageIcon;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 import static thesnake.Direction.UP;
 
 /**
@@ -16,6 +22,7 @@ public class Snake {
 
     private ArrayList<Point> body;
     private Direction direction = Direction.RIGHT;
+    private int growthCounter;
       
     {
         body = new ArrayList<>();
@@ -50,7 +57,13 @@ public class Snake {
 
         body.add(0, new Point(getHead().x + x, getHead().y + y));
         //delete tail
-        body.remove(body.size() - 1);
+        if (growthCounter > 0) {
+            growthCounter--;
+            
+        } else {
+            body.remove(body.size() - 1);
+        }
+        
     } 
 
     public Point getHead() {
@@ -84,6 +97,57 @@ public class Snake {
     public void setDirection(Direction direction) {
         this.direction = direction;
     }
+
+    
+       private static void showAssignment() {
+//        MyFrame window = new MyFrame();
+//        window.setTitle("My Assignment");
+//        window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+//        window.setLayout(new BorderLayout());
+//
+//        Assignment myAssignment = new Assignment();
+//        myAssignment.setBackground(Color.WHITE);
+//        myAssignment.setVisible(true);
+//
+//        window.add(myAssignment, BorderLayout.CENTER);
+//        window.setVisible(true);
+
+        JPanel panel = new JPanel();
+        ImageIcon icon = new ImageIcon("image.jpg");
+        JLabel label = new JLabel();
+        label.setIcon(icon);
+        panel.add(label);
+
+
+    }
+
+    /**
+     * @return the growthCounter
+     */
+    public int getGrowthCounter() {
+        return growthCounter;
+    }
+
+    /**
+     * @param growthCounter the growthCounter to set
+     */
+    public void setGrowthCounter(int growthCounter) {
+        this.growthCounter = growthCounter;
+    }
+    /**
+     * @param growthCounter the growthCounter to set
+     */
+    public void grow(int growth) {
+        this.growthCounter += growth;
+    }
+
+    void getHead(Color BLACK) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+
+
+  
 
     
 }

@@ -33,10 +33,12 @@ class SnakeEnvironment extends Environment {
     private int moveCounter = speed;
     private ArrayList<Point> apples;
     private ArrayList<Point> poisonapple;
-    private ArrayList<Point> diamond;
+    private Image diamond;
     private ArrayList<Point> lightning;
     private boolean drawPicture = false;
     private Image exorcist;
+    private Image dragonHead;
+    private Image dragonbody;
 
     public SnakeEnvironment() {
         AudioPlayer.play("/Sound/ObstacleCourse.wav");
@@ -44,9 +46,13 @@ class SnakeEnvironment extends Environment {
 
     @Override
     public void initializeEnvironment() {
-        this.exorcist = ResourceTools.loadImageFromResource("resources/exorcist2.jpg");
-
-//        this.lightning = ResourceTools.loadImageFromResource("resources/the fist of difference.jpg");
+        exorcist = ResourceTools.loadImageFromResource("resources/fist.jpg");
+        dragonHead = ResourceTools.loadImageFromResource("resources/dragonhead.png");
+        dragonbody = ResourceTools.loadImageFromFile("resources/diamond.png");
+        diamond = ResourceTools.loadImageFromFile("resources.diamond.png");
+        this.lightning = new ArrayList<Point>();
+       
+       
 
         this.setGrid(new Grid());
         this.getGrid().setColor(Color.blue);
@@ -67,16 +73,14 @@ class SnakeEnvironment extends Environment {
         }
 
         this.poisonapple = new ArrayList<Point>();
-        for (int i = 0; i < 7; i++) {
+        for (int i = 0; i < 10; i++) {
             this.poisonapple.add(getRandomGridLocation());
         }
 
 
-        this.diamond = new ArrayList<Point>();
-        this.diamond.add(getRandomGridLocation());
+        
 
-        this.lightning = new ArrayList<Point>();
-        this.lightning.add(getRandomGridLocation());
+         
 
     }
 
@@ -93,7 +97,7 @@ class SnakeEnvironment extends Environment {
                 if (moveCounter <= 0) {
                     snake.move();
                     moveCounter = speed;
-                    speed = 0;
+                    speed = 2;
                     checkSnakeIntersection();
                 } else {
                     moveCounter--;
@@ -134,41 +138,50 @@ class SnakeEnvironment extends Environment {
                 System.out.println("APPLE CHOMP");
                 AudioPlayer.play("/Sound/crunching-1.wav");
                 this.snake.grow(1);
-                this.setScore(this.getScore() + 1);
+                this.setScore(this.getScore() + 2);
                 this.speed -= 2;
                 this.apples.get(i).x = (int) (Math.random() * this.grid.getColumns());
                 this.apples.get(i).y = (int) (Math.random() * this.grid.getRows());
             }
         }
-        for (int i = 0; i < this.lightning.size(); i++) {
-            if (snake.getHead().equals(this.lightning.get(i))) {
-                System.out.println("FASTER");
-                AudioPlayer.play("/Sound/chime.wav");
-                this.speed -= 30;
-                this.lightning.get(i).x = (int) (Math.random() * this.grid.getColumns());
-                this.lightning.get(i).y = (int) (Math.random() * this.grid.getRows());
-            }
-        }
+
         for (int i = 0; i < this.poisonapple.size(); i++) {
             if (snake.getHead().equals(this.poisonapple.get(i))) {
                 System.out.println("BOOOOOM");
                 this.setScore(this.getScore() - 5);
                 AudioPlayer.play("/Sound/bomb.wav");
-                JOptionPane.showMessageDialog(null, "BOOM!! Great job!!");
                 this.poisonapple.get(i).x = (int) (Math.random() * this.grid.getColumns());
                 this.poisonapple.get(i).y = (int) (Math.random() * this.grid.getRows());
             }
         }
-        for (int i = 0; i < this.diamond.size(); i++) {
-            if (snake.getHead().equals(this.diamond.get(i))) {
+         for (int i = 0; i < snake.getBody().size(); i++) {
+            if (snake.getHead().equals(snake.getBody())) {
+                state = GameState.ENDED;
+                
+            }
+        }
+//        for (int i = 0; i < this.diamond.size(); i++) {
+//            if (snake.getHead().equals(this.diamond.get(i))) {
+//                System.out.println("OOHH DIAMONDS");
+//                this.snake.grow(2);
+//                this.setScore(this.getScore() + 10);
+//                this.speed -= 2;
+//                AudioPlayer.play("/Sound/chime.wav");
+////                JOptionPane.showMessageDialog(null, "OOHH");
+//                this.diamond.get(i).x = (int) (Math.random() * this.grid.getColumns());
+//                this.diamond.get(i).y = (int) (Math.random() * this.grid.getRows());
+//            }
+//        }
+            for (int i = 0; i < this.lightning.size(); i++) {
+            if (snake.getHead().equals(this.lightning.get(i))) {
                 System.out.println("OOHH DIAMONDS");
                 this.snake.grow(2);
                 this.setScore(this.getScore() + 10);
                 this.speed -= 2;
                 AudioPlayer.play("/Sound/chime.wav");
 //                JOptionPane.showMessageDialog(null, "OOHH");
-                this.diamond.get(i).x = (int) (Math.random() * this.grid.getColumns());
-                this.diamond.get(i).y = (int) (Math.random() * this.grid.getRows());
+                this.lightning.get(i).x = (int) (Math.random() * this.grid.getColumns());
+                this.lightning.get(i).y = (int) (Math.random() * this.grid.getRows());
             }
         }
 
@@ -181,6 +194,7 @@ class SnakeEnvironment extends Environment {
         if (snake.getHead().y > grid.getColumns() - 1) {
             snake.getHead().y = 0;
         }
+    
     }
 
     @Override
@@ -237,27 +251,36 @@ class SnakeEnvironment extends Environment {
                     GraphicsPalette.drawBomb(graphics, this.grid.getCellPosition(this.poisonapple.get(i)), this.grid.getCellSize(), Color.BLACK);
                 }
             }
-            if (this.diamond != null) {
-                for (int i = 0; i < this.diamond.size(); i++) {
-                    GraphicsPalette.drawDiamond(graphics, this.grid.getCellPosition(this.diamond.get(i)), this.grid.getCellSize(), Color.BLUE);
+//            if (this.diamond != null) {
+//                for (int i = 0; i < this.diamond.size(); i++) {
+//                    GraphicsPalette.drawDiamond(graphics, this.grid.getCellPosition(this.diamond.get(i)), this.grid.getCellSize(), Color.BLUE);
+//
+//                }
+//            }
+                if (this.lightning != null) {
+                for (int i = 0; i < this.lightning.size(); i++) {
+                    ResourceTools.loadImageFromResource("resource/diamonds.jpg");
+                
 
                 }
             }
-            if (this.lightning != null) {
-                for (int i = 0; i < this.lightning.size(); i++) {
-                }
-            }
+//            
 
             Point cellLocation;
-            graphics.setColor(Color.BLUE);
+            graphics.setColor(Color.RED);
             if (getSnake() != null) {
-                for (int i = 0; i < getSnake().getBody().size(); i++) {
+                for (int i = 0; i < 1; i++) {
+                    cellLocation = getGrid().getCellPosition(getSnake().getBody().get(i));
+                    graphics.drawImage(dragonHead, cellLocation.x, cellLocation.y, getGrid().getCellWidth(), getGrid().getCellHeight(), this);
+                }
+
+                for (int i = 1; i < getSnake().getBody().size(); i++) {
                     cellLocation = getGrid().getCellPosition(getSnake().getBody().get(i));
                     graphics.fillRect(cellLocation.x, cellLocation.y, getGrid().getCellWidth(), getGrid().getCellHeight());
                 }
 
             }
-        }
+        
 
 
         GraphicsPalette.enterPortal(graphics, new Point(300, 50), new Point(this.grid.getCellSize()), Color.yellow);
@@ -270,18 +293,20 @@ class SnakeEnvironment extends Environment {
         graphics.drawString("Score: " + this.getScore(), 125, 75);
 
         graphics.setFont(new Font("Mistral", Font.BOLD, 72));
-        graphics.drawString("Snake Run ", 370, 75);
+        graphics.drawString("Dragon Run ", 370, 75);
 
         if (drawPicture) {
-            graphics.drawImage(exorcist, 150, 0, this);
+            graphics.drawImage(exorcist, 300, 0, this);
         }
+        
         if (state == GameState.ENDED) {
             graphics.setFont(new Font("Calibri", Font.ITALIC, 100));
-            graphics.drawString("GAME OVER!!", 200, 300);
+            graphics.drawString("YOU WIN!", 200, 300);
         }
 
 
 
+    }
     }
 
     /**
@@ -337,11 +362,11 @@ class SnakeEnvironment extends Environment {
      * @param score the score to set
      */
     public void setScore(int score) {
-        if ((this.score < 60) && (score >= 60)) {
+        if ((this.score < 100) && (score >= 100)) {
             System.out.println("WOOOOOOOOOOT");
             //show picture
             // play sound
-            AudioPlayer.play("/Sound/screaming.wav");
+            AudioPlayer.play("/Sound/applause-2.wav");
             setState(GameState.ENDED);
             this.drawPicture = true;
         }

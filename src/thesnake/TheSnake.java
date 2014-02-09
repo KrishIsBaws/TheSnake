@@ -28,7 +28,8 @@ public class TheSnake {
 
     private static void start() {
         SnakeEnvironment myGame = new SnakeEnvironment();
-        myGame.setBackground(ResourceTools.loadImageFromResource("resources/Yellow.jpg"));
+        myGame.setBackground(ResourceTools.loadImageFromResource("resources/Castle"
+                + ".jpg"));
         
         ApplicationStarter.run("TheSnakeGame", myGame);
         saySomething("asda");
@@ -36,8 +37,8 @@ public class TheSnake {
     }
 
     private static void saySomething(String asda) {
-          JOptionPane.showMessageDialog(null, "Welcome to snake run");
-          JOptionPane.showMessageDialog(null, "To Play this game, you must use the arrow keys to navigate where the snake goes. Try to eat the apples and diamonds while avoiding the Bombs. The aim is to get 60 points. GL!");
+          JOptionPane.showMessageDialog(null, "Welcome to Dragon run");
+          JOptionPane.showMessageDialog(null, "To Play this game, you must use the arrow keys to navigate where the snake goes. Try to eat the apples and diamonds while avoiding the Bombs. The aim is to get 100 points. GL!");
 
         }
 }

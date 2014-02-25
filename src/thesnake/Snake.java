@@ -141,8 +141,7 @@ public class Snake {
         this.growthCounter += growth;
     }
 
-    void getHead(Color BLACK) {
-            }
+   
 
 
 

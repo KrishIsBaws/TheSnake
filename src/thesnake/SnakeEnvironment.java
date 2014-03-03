@@ -359,6 +359,9 @@ class SnakeEnvironment extends Environment {
                 
                 }
             }
+            if (state == GameState.START) {
+                graphics.fillRect(100, 100, 100, 100);
+            }
 
 
 

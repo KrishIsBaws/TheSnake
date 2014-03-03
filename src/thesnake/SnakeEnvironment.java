@@ -24,90 +24,112 @@ import javax.swing.JOptionPane;
  * @author Achyuth1998
  */
 class SnakeEnvironment extends Environment {
-
-    private GameState state = GameState.PAUSED;
+    
+    private GameState state = GameState.START;
     private Grid grid;
     private int score = 0;
     private Snake snake;
-    private int speed = -5;
+    private int speed = -30;
     private int moveCounter = speed;
     private ArrayList<Point> apples;
     private ArrayList<Point> poisonapple;
     private ArrayList<Point> diamond;
     private ArrayList<Point> lightning;
+    private ArrayList<Point> wall;
     private boolean drawPicture = false;
+    
     private Image exorcist;
     private Image dragonHead;
     private Image diamonds;
     private Image poison;
     private Image knight;
     private Image snakeskin;
+    private Image left;
+    private Image down;
+    private Image up;
+    private Image right;
     private Direction direction;
-
+    
     public SnakeEnvironment() {
+        setState(GameState.START);
         AudioPlayer.play("/Sound/ObstacleCourse.wav");
     }
-
+    
     @Override
     public void initializeEnvironment() {
         exorcist = ResourceTools.loadImageFromResource("resources/VillageBurn.jpg");
         dragonHead = ResourceTools.loadImageFromResource("resources/dragonhead.png");
-        diamonds = ResourceTools.loadImageFromResource("resources/diamond.png");
+        diamonds = ResourceTools.loadImageFromResource("resources/sheep.png");
         knight = ResourceTools.loadImageFromResource("resources/knighthead.png");
         poison = ResourceTools.loadImageFromResource("resources/Poison.png");
-snakeskin = ResourceTools.loadImageFromResource("resources/wing.png");
-this.direction = direction;
-
-
-
+        snakeskin = ResourceTools.loadImageFromResource("resources/wing.png");
+        right = ResourceTools.loadImageFromResource("resources/dragon_right.png");
+        left = ResourceTools.loadImageFromResource("resources/dragon_left.png");
+        up = ResourceTools.loadImageFromResource("resources/dragon_up.png");
+        down = ResourceTools.loadImageFromResource("resources/dragon_down.png");
+        this.direction = direction;
+        
+        
         this.setGrid(new Grid());
         this.getGrid().setColor(Color.blue);
         this.getGrid().setColumns(40);
         this.getGrid().setRows(20);
         this.getGrid().setPosition(new Point(50, 100));
         
-
+        this.wall = new ArrayList<Point>();
+        for (int i = 0; i < this.grid.getColumns(); i++) {
+            this.wall.add(new Point(i, 0));
+            this.wall.add(new Point(i, this.grid.getRows() -1));
+//            this.wall.add(new Point(i, this.grid.getRows() ));
+            this.wall.add(new Point(i, this.grid.getColumns()));
+//            this.wall.add(new Point(i, this.grid.getColumns() +1));
+        }
+        for (int i = 0; i < this.grid.getRows(); i++) {
+            this.wall.add(new Point(0, i));
+            this.wall.add(new Point(this.grid.getColumns(), i));
+        }
+        
         this.setSnake(new Snake());
         this.getSnake().getBody().add(new Point(5, 5));
         this.getSnake().getBody().add(new Point(5, 6));
         this.getSnake().getBody().add(new Point(5, 7));
         this.getSnake().getBody().add(new Point(5, 8));
         this.getSnake().getBody().add(new Point(6, 8));
-
+        
         this.apples = new ArrayList<Point>();
         for (int i = 0; i < 1; i++) {
             this.apples.add(getRandomGridLocation());
         }
-
+        
         this.poisonapple = new ArrayList<Point>();
         for (int i = 0; i < 3; i++) {
             this.poisonapple.add(getRandomGridLocation());
         }
-
+        
         this.diamond = new ArrayList<Point>();
         for (int i = 0; i < 2; i++) {
             this.diamond.add(getRandomGridLocation());
-
+            
         }
         this.lightning = new ArrayList<Point>();
         this.lightning.add(getRandomGridLocation());
         this.lightning.add(getRandomGridLocation());
-
-
-
-
-
-
-
-
-
+        
+        
+        
+        
+        
+        
+        
+        
+        
     }
-
+    
     private Point getRandomGridLocation() {
         return new Point((int) (Math.random() * this.grid.getColumns()), (int) (Math.random() * this.grid.getRows()));
-
+        
     }
-
+    
     @Override
     public void timerTaskHandler() {
 //        System.out.println("use your keys");
@@ -116,12 +138,12 @@ this.direction = direction;
                 if (moveCounter <= 0) {
                     snake.move();
                     moveCounter = speed;
-                    speed = -5;
+                    speed = -30;
                     checkSnakeIntersection();
                 } else {
                     moveCounter--;
                 }
-
+                
                 if (snake.getDirection() == Direction.RIGHT) {
                     if (snake.getHead().x >= this.grid.getColumns()) {
                         snake.getHead().x = 0;
@@ -139,19 +161,19 @@ this.direction = direction;
                         snake.getHead().y = 0;
                     }
                 }
-
+                
             }
         }
-
+        
     }
-
+    
     private void checkSnakeIntersection() {
         // if the snake location is the same as an apple
         //then grow the snake and remove the apple
         // later, move the apple and make a sound and increase the score
 //        System.out.println("Checking");
 
-
+        
         for (int i = 0; i < this.apples.size(); i++) {
             if (snake.getHead().equals(this.apples.get(i))) {
                 System.out.println("Yum Yum");
@@ -163,7 +185,7 @@ this.direction = direction;
                 this.apples.get(i).y = (int) (Math.random() * this.grid.getRows());
             }
         }
-
+        
         for (int i = 0; i < this.poisonapple.size(); i++) {
             if (snake.getHead().equals(this.poisonapple.get(i))) {
                 System.out.println("BOOOOOM");
@@ -185,22 +207,22 @@ this.direction = direction;
             }
         }
         for (int i = 1; i < this.snake.getBody().size(); i++) {
-
-
+            
+            
             if (snake.getHead().equals(snake.getBody().get(i).getLocation())) {
                 state = GameState.ENDED;
-                JOptionPane.showMessageDialog(this, "Press Enter and Spacebar");
+//                JOptionPane.showMessageDialog(this, "Press Enter and Spacebar");
 
-
-
+                
+                
             }
         }
-
+        
         for (int i = 0; i < this.diamond.size(); i++) {
             if (snake.getHead().equals(this.diamond.get(i))) {
-                System.out.println("OOHH DIAMONDS");
+                System.out.println("Some good meat");
                 this.snake.grow(2);
-                this.setScore(this.getScore() + 10);
+                this.setScore(this.getScore() + 2);
                 this.speed -= 2;
                 AudioPlayer.play("/Sound/chime.wav");
                 this.diamond.get(i).x = (int) (Math.random() * this.grid.getColumns());
@@ -211,7 +233,7 @@ this.direction = direction;
             if (snake.getHead().equals(this.lightning.get(i))) {
                 System.out.println("OOHH DIAMONDS");
                 this.snake.grow(2);
-                this.setScore(this.getScore() + 10);
+                this.setScore(this.getScore() + 1);
                 this.speed = 0;
                 AudioPlayer.play("/Sound/chime.wav");
 //                JOptionPane.showMessageDialog(null, "OOHH");
@@ -219,9 +241,9 @@ this.direction = direction;
                 this.lightning.get(i).y = (int) (Math.random() * this.grid.getRows());
             }
         }
-
+        
     }
-
+    
     private void checkHeadPosition() {
         if (snake.getHead().x < 0) {
             snake.getHead().x = grid.getColumns() - 1;
@@ -229,9 +251,9 @@ this.direction = direction;
         if (snake.getHead().y > grid.getColumns() - 1) {
             snake.getHead().y = 0;
         }
-
+        
     }
-
+    
     @Override
     public void keyPressedHandler(KeyEvent e) {
         if (e.getKeyCode() == KeyEvent.VK_P) {
@@ -243,7 +265,7 @@ this.direction = direction;
         }
         int startAngle = 0;
         int arcAngle = 310;
-
+        
         if (direction == Direction.RIGHT) {
             startAngle = 30;
         } else if (direction == Direction.UP) {
@@ -253,16 +275,18 @@ this.direction = direction;
         } else if (direction == Direction.DOWN) {
             startAngle = 300;
         }
-
+        
+        
         if (e.getKeyCode() == KeyEvent.VK_S) {
-            this.setScore(this.getScore() + 500);
+            this.setScore(this.getScore() + 100);
         } else if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
             getSnake().setDirection(Direction.RIGHT);
             getSnake().move();
+            
         } else if (e.getKeyCode() == KeyEvent.VK_LEFT) {
             getSnake().setDirection(Direction.LEFT);
             getSnake().move();
-           
+            
         } else if (e.getKeyCode() == KeyEvent.VK_UP) {
             getSnake().setDirection(Direction.UP);
             getSnake().move();
@@ -275,33 +299,41 @@ this.direction = direction;
             this.snake.grow(2);
         } else if (e.getKeyCode() == KeyEvent.VK_SPACE) {
             
-               
-               setState(GameState.RESTART);
-               
             
-        }
+            setState(GameState.RESTART);
+            
+            
+        } else if (e.getKeyCode() == KeyEvent.VK_1) {
+            
+            
+            
+            
+            
+        } 
     }
-
+    
     @Override
     public void keyReleasedHandler(KeyEvent e) {
     }
-
+    
     @Override
     public void environmentMouseClicked(MouseEvent e) {
     }
-
+    
     @Override
     public void paintEnvironment(Graphics graphics) {
         if (this.getGrid() != null) {
-            this.getGrid().paintComponent(graphics);
+//            this.getGrid().paintComponent(graphics);
 //            graphics.drawRect(50, 100, 80, 80);  
-
+            if (this.direction == direction.UP) {
+//               snake.getHead()
+            }
             if (this.apples != null) {
                 for (int i = 0; i < this.apples.size(); i++) {
                     graphics.drawImage(knight, this.grid.getCellPosition(this.apples.get(i)).x, this.grid.getCellPosition(this.apples.get(i)).y, getGrid().getCellWidth(), getGrid().getCellHeight(), this);
                 }
             }
-
+            
             if (this.poisonapple != null) {
                 for (int i = 0; i < this.poisonapple.size(); i++) {
                     GraphicsPalette.drawBomb(graphics, this.grid.getCellPosition(this.poisonapple.get(i)), this.grid.getCellSize(), Color.BLACK);
@@ -310,16 +342,26 @@ this.direction = direction;
             if (this.diamond != null) {
                 for (int i = 0; i < this.diamond.size(); i++) {
                     graphics.drawImage(diamonds, this.grid.getCellPosition(this.diamond.get(i)).x, this.grid.getCellPosition(this.diamond.get(i)).y, getGrid().getCellWidth(), getGrid().getCellHeight(), this);
-
+                    
                 }
             }
             if (this.lightning != null) {
                 for (int i = 0; i < this.lightning.size(); i++) {
                     graphics.drawImage(poison, this.grid.getCellPosition(this.lightning.get(i)).x, this.grid.getCellPosition(this.lightning.get(i)).y, getGrid().getCellWidth(), getGrid().getCellHeight(), this);
-
-
+                    
+                    
                 }
             }
+            if (this.wall != null) {
+                for (int i = 0; i < this.wall.size(); i++) {
+//                    graphics.fillOval(this.grid.getCellPosition(this.wall.get(i)).x, this.grid.getCellPosition(this.wall.get(i)).y, grid.getCellWidth(), grid.getCellHeight());
+                    graphics.fill3DRect(this.grid.getCellPosition(this.wall.get(i)).x, this.grid.getCellPosition(this.wall.get(i)).y, grid.getCellWidth(), grid.getCellHeight(), true);
+                
+                }
+            }
+
+
+
 //            
 
             Point cellLocation;
@@ -329,56 +371,72 @@ this.direction = direction;
                     cellLocation = getGrid().getCellPosition(getSnake().getBody().get(i));
                     graphics.drawImage(dragonHead, cellLocation.x, cellLocation.y, getGrid().getCellWidth(), getGrid().getCellHeight(), this);
                 }
-
+                
                 for (int i = 1; i < getSnake().getBody().size(); i++) {
                     cellLocation = getGrid().getCellPosition(getSnake().getBody().get(i));
-                    graphics.drawImage(snakeskin, cellLocation.x, cellLocation.y, getGrid().getCellWidth(), getGrid().getCellHeight(), this);
+//                   
+                    graphics.setColor(Color.red);
+//                    graphics.drawImage(snakeskin, cellLocation.x, cellLocation.y, getGrid().getCellWidth(), getGrid().getCellHeight(), this);
+                    graphics.fillOval(cellLocation.x, cellLocation.y, getGrid().getCellWidth(), getGrid().getCellHeight());
                 }
-
+                
             }
-
-
-
+            
+            
+            
             GraphicsPalette.enterPortal(graphics, new Point(300, 50), new Point(this.grid.getCellSize()), Color.yellow);
             GraphicsPalette.leavePortal(graphics, new Point(650, 50), new Point(this.grid.getCellSize()), Color.yellow);
-
-
-
+            
+            
+            
             graphics.setColor(Color.BLUE);
             graphics.setFont(new Font("Mistral", Font.ITALIC, 50));
             graphics.drawString("Score: " + this.getScore(), 125, 75);
-
+            
             graphics.setFont(new Font("Mistral", Font.BOLD, 72));
             graphics.drawString("Dragon Run ", 370, 75);
-
+            
             if (drawPicture) {
                 graphics.drawImage(exorcist, 0, 0, this);
             }
-
+            if (state == GameState.START) {
+                setState(GameState.PAUSED);
+                graphics.setColor(Color.RED);
+                graphics.fillRect(100, 100, 1000, 1000);
+                
+            }
+            
             if (state == GameState.ENDED) {
-            graphics.setFont(new Font("Calibri", Font.ITALIC, 100));
-            AudioPlayer.play("/Sound/applause-2.wav");
-            setState(GameState.ENDED);
-            this.drawPicture = true;
+                graphics.setFont(new Font("Calibri", Font.ITALIC, 100));
+//                AudioPlayer.play("/Sound/applause-2.wav");
+                setState(GameState.ENDED);
+                this.drawPicture = true;
 //            this.score = 0;
 //            graphics.drawString(("Nice Job "), 80, 75);
-            graphics.setColor(Color.red);
-            graphics.setFont(new Font("Stencil", Font.BOLD, 100));
-            graphics.drawString(("Score: " + this.getScore()), 110, 200);
+                graphics.setColor(Color.red);
+                graphics.setFont(new Font("Stencil", Font.BOLD, 100));
+                graphics.drawString(("Score: " + this.getScore()), 110, 200);
 //            JOptionPane.showMessageDialog(this, "YOU WIN!!! GREAT JOB");
             }
             
             if (state == GameState.RESTART) {
                 this.score = 0;
+                
                 setState(GameState.RUNNING);
                 this.drawPicture = false;
+            }
+            if (state == GameState.PAUSED) {
+                graphics.setColor(new Color(52, 44, 156, 250));
+                graphics.fillRect(300, 225,250 , 100);
+                graphics.setColor(Color.red);
+                graphics.drawString("Paused ", 350, 300);
             }
             
             
             
- 
-
-
+            
+            
+            
         }
     }
 
@@ -435,7 +493,7 @@ this.direction = direction;
      * @param score the score to set
      */
     public void setScore(int score) {
-        if ((this.score < 500) && (score >= 500)) {
+        if ((this.score < 100) && (score >= 100)) {
             System.out.println("WOOOOOOOOOOT");
             //show picture
             // play sound
@@ -443,17 +501,32 @@ this.direction = direction;
             this.drawPicture = true;
             JOptionPane.showMessageDialog(this, "YOU WIN!!! GREAT JOB");
         }
+//        if ((this.score < 10) && (score >= 0)) {
+//          
+//            JOptionPane.showMessageDialog(this, "Not the greatest game");
+//        }
+//         if ((this.score < 20) && (score >= 10)) {
+//          
+//            JOptionPane.showMessageDialog(this, "You are getting better");
+//        }
+//          if ((this.score < 30) && (score >= 20)) {
+//          
+//            JOptionPane.showMessageDialog(this, "You are pretty good");
+//        }
+//           if ((this.score < 40) && (score >= 30)) {
+//          
+//            JOptionPane.showMessageDialog(this, "You almost won!!");
+//        }
         this.score = score;
     }
     
-    public int getSpeed(){
+    public int getSpeed() {
         return speed;
         
-         
+        
     }
     
-    
-    public void setSpeed(int speed){
+    public void setSpeed(int speed) {
         this.speed = speed;
     }
 }

@@ -9,5 +9,5 @@ package thesnake;
  * @author Achyuth1998
  */
 public enum GameState {
-    RUNNING, PAUSED, ENDED, RESTART
+    RUNNING, PAUSED, ENDED, RESTART, START
 }

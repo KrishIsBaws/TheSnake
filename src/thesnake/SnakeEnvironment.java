@@ -116,7 +116,7 @@ class SnakeEnvironment extends Environment {
         this.lightning.add(getRandomGridLocation());
         
         
-        
+        state = GameState.START;
         
         
         
@@ -133,6 +133,10 @@ class SnakeEnvironment extends Environment {
     @Override
     public void timerTaskHandler() {
 //        System.out.println("use your keys");
+//        if (getState() == GameState.START) {
+//            setState(GameState.PAUSED);
+//        }
+        
         if (getState() == GameState.RUNNING) {
             if (snake != null) {
                 if (moveCounter <= 0) {
@@ -303,12 +307,6 @@ class SnakeEnvironment extends Environment {
             setState(GameState.RESTART);
             
             
-        } else if (e.getKeyCode() == KeyEvent.VK_1) {
-            
-            
-            
-            
-            
         } 
     }
     
@@ -326,7 +324,9 @@ class SnakeEnvironment extends Environment {
 //            this.getGrid().paintComponent(graphics);
 //            graphics.drawRect(50, 100, 80, 80);  
             if (this.direction == direction.UP) {
-//               snake.getHead()
+                if (getSnake().getHead().equals(dragonHead)) {
+//                    getSnake().getHead().equals(up);
+                }
             }
             if (this.apples != null) {
                 for (int i = 0; i < this.apples.size(); i++) {
@@ -359,9 +359,7 @@ class SnakeEnvironment extends Environment {
                 
                 }
             }
-            if (state == GameState.START) {
-                graphics.fillRect(100, 100, 100, 100);
-            }
+//         
 
 
 
@@ -403,7 +401,10 @@ class SnakeEnvironment extends Environment {
                 graphics.drawImage(exorcist, 0, 0, this);
             }
             if (state == GameState.START) {
-                setState(GameState.PAUSED);
+                if (state == GameState.RUNNING) {
+                    state = GameState.START;
+                }
+// setState(GameState.PAUSED);
                 graphics.setColor(Color.RED);
                 graphics.fillRect(100, 100, 1000, 1000);
                 
